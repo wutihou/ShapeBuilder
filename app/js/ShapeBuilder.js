@@ -856,7 +856,6 @@
 					s.c.drag();
 				}
 			}else{//二次渲染
-
 			}
 			this.mOption.isRendered++;
 
