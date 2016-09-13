@@ -832,7 +832,8 @@
 			if(this.mOption.isRendered === 0){//初次渲染
 				//绘制外框
 				this.defaultAttr.fill = "#fff";
-				this.mInstance = this.snap.rect(0,0,clientWidth,clientHeight).attr(this.defaultAttr);
+				//this.mInstance = this.snap.rect(0,0,clientWidth,clientHeight).attr(this.defaultAttr);
+				this.mInstance = {};
 
 				//绘制小图形
 				var path, s, i,len,p;
@@ -852,6 +853,7 @@
 					this.defaultAttr.fill = s.fill;
 					this.defaultAttr.key = sub;
 					s.c = this.snap.path(path).attr(this.defaultAttr).click(clickSubGraph,this);
+					s.c.drag();
 				}
 			}else{//二次渲染
 
