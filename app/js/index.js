@@ -29,3 +29,7 @@ triangleright.fill("#73a093");
 var sevenpiecepuzzle = new ShapeBuilder(".svg-container#sevenpiecepuzzle");
 sevenpiecepuzzle.setShape("sevenpiecepuzzle");
 sevenpiecepuzzle.fill("#73a093");
+
+var line = new ShapeBuilder(".svg-container#line");
+line.setShape("line");
+line.line(0,0,150,150);

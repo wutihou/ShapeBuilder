@@ -4,8 +4,9 @@
 		circle:"circle",//圆
 		rectangle:"rectangle",//矩形
 		triangle:"triangle",//三角形
-		star:"lazyRender",//五角星
 		sevenpiecepuzzle:"sevenpiecepuzzle",//七巧板
+		line:"line",
+		star:"lazyRender",//五角星
 		trapezoid:"lazyRender",//梯形
 		arrowright:"lazyRender",//右箭头
 		triangleright:"lazyRender"//直角三角形
@@ -15,7 +16,6 @@
 		if (!window.Snap) {
 			throw new Error("缺少Snap.svg库");
 		}
-
 		this._initSb(selector);
 	};
 	
@@ -60,6 +60,32 @@
 			this.mOption.shapeType = this.mRender.getShapeType();
 		}
 	};
+
+	/**
+	 * 设置容器大小
+	 * @param {Object} shape
+	 */
+	ShapeBuilder.prototype.setSize = function(width,height){
+		if(this.mRender && this.mRender.onResize){
+			this.mRender.onResize.call(this.mRender,width,height);
+		}else{
+			throw new Error("图形尚未绘制");
+		}
+	};
+
+	/**
+	 * 画直线
+	 * @param {Object} shape
+	 */
+	ShapeBuilder.prototype.line = function(x1,y1,x2,y2){
+		//1、判断当前图形是否为直线
+		if(this.mOption.shapeType != supportShape.line){
+			throw new Error("当前图形不是直线!");
+		}
+		//2、重绘直线
+		this.refresh(x1,y1,x2,y2);
+	};
+
 	/**
 	 * 更新视图
 	 */
@@ -94,6 +120,7 @@
 
 		BasicRender.prototype.super = function(){
 			this.mInstance = null;
+			this.snap = null;
 			this.mOption = {
 				width:0,
 				height:0,
@@ -122,6 +149,26 @@
 				});
 			}
 		};
+
+		BasicRender.prototype.setDefaultViewBox = function(){
+			var viewBox = "0 0 150 150";
+			if(this.snap){
+				this.snap.attr({
+					viewBox:viewBox
+				});
+			}
+		};
+
+		BasicRender.prototype.onResize = function(width,height){
+			this.mOption.width = width;
+			this.mOption.height = height;
+			if(this.snap){
+				this.snap.attr({
+					width:width,
+					height:height
+				});
+			}
+		};
 		
 		BasicRender.prototype.getShapeType = function(){
 			return this.shapeType;
@@ -144,6 +191,7 @@
 			this.sb = sb;
 
 			this.onLoadSvg();
+			this.setDefaultViewBox();
 		}
 		LazyRender.prototype = new BasicRender();
 		LazyRender.prototype.supportShape = {
@@ -221,6 +269,7 @@
 				c:null,//圆心对应的元素对象,
 				r:2
 			};
+			this.setDefaultViewBox();
 			this.onDraw();
 		}
 		Circle.prototype = new BasicRender();
@@ -274,6 +323,7 @@
 			sb.mOption.wrap.appendChild(svg);
 
 			this.snap = snap;
+			this.setDefaultViewBox();
 			this.mOption.width = snap.asPX("width");
 			this.mOption.height = snap.asPX("height");
 			this.onDraw();
@@ -308,6 +358,82 @@
 		};
 		renders[supportShape.rectangle] = Rectangle;
 		/************************矩形渲染工具end***************************/
+
+		/*
+		 *
+		 *
+		 *
+		 *
+		 *
+		 *
+		 *
+		 *
+		 *
+		 */
+
+		/************************直线渲染工具start***************************/
+		function Line(sb){
+			this.super();
+			this.shapeType = supportShape.line;
+
+			var snap = Snap(sb.mOption.width,sb.mOption.height);
+			var svg = snap.node;
+			sb.mOption.wrap.appendChild(svg);
+
+			this.line = {
+				x1:0,
+				y1:0,
+				x2:0,
+				y2:0
+			};
+
+			this.snap = snap;
+			this.setDefaultViewBox();
+			this.mOption.width = snap.asPX("width");
+			this.mOption.height = snap.asPX("height");
+			this.onDraw();
+		}
+		Line.prototype = new BasicRender();
+
+		/**
+		 * 清空
+		 */
+		Line.prototype.clearAll = function(){
+			if(this.mInstance){
+				this.mInstance.remove();
+			}
+		};
+
+		Line.prototype.onDraw = function(){
+			this.mOption.isRendered++;
+			var x1 = this.line.x1,
+				y1 = this.line.y1,
+				x2 = this.line.x2,
+				y2 = this.line.y2;
+
+			if(this.mOption.isRendered === 0) {//初次渲染
+				this.mInstance = this.snap.line(x1,y1,x2,y2).attr(this.defaultAttr);
+			}else{//二次渲染
+				if(this.mInstance){
+					this.mInstance.attr({
+						x1:x1,
+						y1:y1,
+						x2:x2,
+						y2:y2
+					});
+				}
+			}
+			this.mOption.isRendered++;
+		};
+		Line.prototype.onRefresh = function(x1,y1,x2,y2){
+			this.line.x1 = x1;
+			this.line.y1 = y1;
+			this.line.x2 = x2;
+			this.line.y2 = y2;
+			this.onDraw();
+		};
+		renders[supportShape.line] = Line;
+		/************************直线渲染工具end***************************/
 		
 		/*
 		 *
@@ -331,6 +457,7 @@
 			sb.mOption.wrap.appendChild(svg);
 
 			this.snap = snap;
+			this.setDefaultViewBox();
 			this.mPoint = {
 				p1:{
 					x:0,
@@ -530,6 +657,7 @@
 			sb.mOption.wrap.appendChild(svg);
 
 			this.snap = snap;
+			this.setDefaultViewBox();
 			this.subGraph = {//定义7个子图
 				sub1:{
 					points:[
