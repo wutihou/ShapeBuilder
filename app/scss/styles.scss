@@ -1,0 +1,18 @@
+body{
+    margin: 0;
+    background-color: #212121;
+}
+ul{
+    list-style: none;
+    li{
+        float: left;
+    }
+}
+.svg-container{
+    width: 150px;
+    height: 150px;
+    background-color: lightgray;
+    margin-left: 50px;
+    margin-top: 20px;
+    display: inline-block;
+}
