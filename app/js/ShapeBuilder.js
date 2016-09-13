@@ -97,8 +97,7 @@
 			this.mOption = {
 				width:0,
 				height:0,
-				isRendered:-1,//isRendered==-1：未初始，isRendered==0：初始化，未渲染，isRendered>0:已渲染
-				waiting:false//是否等待加载svg文件
+				isRendered:-1//isRendered==-1：未初始，isRendered==0：初始化，未渲染，isRendered>0:已渲染
 			};
 		};
 		
@@ -107,15 +106,7 @@
 		 * @param {Object} color
 		 */
 		BasicRender.prototype.fill = function(color){
-			if(!this.mInstance){
-				if(this.mOption.waiting === true){//如果是外部加载的svg，需要等待
-					setTimeout(function(){
-						this.fill(color);
-					}.bind(this),100);
-				}else{
-					throw new Error("图形没有绘制");
-				}
-			}else{
+			if(this.mInstance && this.onFill){
 				this.onFill(color);
 			}
 		};
@@ -149,18 +140,37 @@
 			if(!this.supportShape[type]){
 				throw new Error("不支持该图形");
 			}
-			this.shapeType = this.supportShape[type];
+			this.shapeType = this.supportShape[type].name;
 			this.sb = sb;
 
-			this.mOption.waiting = true;
 			this.onLoadSvg();
 		}
 		LazyRender.prototype = new BasicRender();
 		LazyRender.prototype.supportShape = {
-			star:"star",//五角星
-			trapezoid:"trapezoid",//梯形
-			arrowright:"arrowright",//右箭头
-			triangleright:"triangleright"//直角三角形
+			star:{//五角星
+				name:'star',
+				str:'<svg width="150" height="150" xmlns="http://www.w3.org/2000/svg">' +
+				'<path d="m1.78,57.59944l55.66693,0l17.20151,-55.76719l17.20152,55.76719l55.66692,0l-45.03541,34.46562l17.2024,55.76719l-45.03543,-34.46656l-45.03542,34.46656l17.2024,-55.76719l-45.03542,-34.46562z"/>' +
+				'</svg>'
+			},
+			trapezoid:{//梯形
+				name:'trapezoid',
+				str:'<svg width="150" height="150" xmlns="http://www.w3.org/2000/svg">' +
+					'<path d="m1,147.99999l27.9375,-146l93.12501,0l27.93749,146l-149.00001,0z"/>' +
+					'</svg>'
+			},
+			arrowright:{//右箭头
+				name:'arrowright',
+				str:'<svg width="150" height="150" xmlns="http://www.w3.org/2000/svg">' +
+				'<path d="m68.30813,120.24734l23.14807,-27.68181l-44.75567,0l-44.75557,0l0,-17.13635l0,-17.13637l44.24213,0c24.33314,0 44.2421,-0.86855 44.2421,-1.93012c0,-1.06155 -9.68695,-13.51837 -21.52652,-27.68181l-21.52659,-25.75171l19.89715,0l19.89707,0l30.38734,36.28472l30.38732,36.28471l-30.44561,36.21528l-30.4456,36.21528l-20.94686,0l-20.9469,0l23.14813,-27.68182l0.00001,0.00001z"/>' +
+				'</svg>'
+			},
+			triangleright:{//直角三角形
+				name:'triangleright',
+				str:'<svg width="150" height="150" xmlns="http://www.w3.org/2000/svg">' +
+				'<path d="m1.48501,148.39534l0,-147.39534l147.99999,147.39534l-147.99999,0z"/>' +
+				'</svg>'
+			}
 		};
 
 		/**
@@ -174,18 +184,16 @@
 
 		LazyRender.prototype.onLoadSvg = function(){
 			var shape = this.shapeType;
-			var url = "../svg/"+shape+".svg";
-			Snap.load(url,function(svg){
-				this.mOption.isRendered++;
-				this.sb.mOption.wrap.appendChild(svg.node);
-				var snap = Snap(svg.node);
-				this.snap = snap;
-				this.mOption.width = snap.asPX("width");
-				this.mOption.height = snap.asPX("height");
-				this.mInstance = snap.select("path").attr(this.defaultAttr);
-				this.mOption.isRendered++;
-				this.mOption.waiting = false;
-			},this);
+
+			this.mOption.isRendered++;
+			var svg = Snap.parse(this.supportShape[shape].str);
+			this.sb.mOption.wrap.appendChild(svg.node);
+			var snap = Snap(svg.node);
+			this.snap = snap;
+			this.mOption.width = snap.asPX("width");
+			this.mOption.height = snap.asPX("height");
+			this.mInstance = snap.select("path").attr(this.defaultAttr);
+			this.mOption.isRendered++;
 		};
 
 		LazyRender.prototype.onDraw = function(){
