@@ -1,16 +1,18 @@
 body {
-  margin: 0;
-  background-color: #212121; }
+  margin: 0; }
 
 ul {
   list-style: none; }
   ul li {
-    float: left; }
+    float: left;
+    width: 150px;
+    height: 150px;
+    margin-left: 20px;
+    margin-top: 20px;
+    background-color: #b0b0b0; }
 
 .svg-container {
-  width: 150px;
-  height: 150px;
-  background-color: lightgray;
-  margin-left: 50px;
-  margin-top: 20px;
-  display: inline-block; }
+  background-color: lightgray; }
+
+.sub-sevenpiecepuzzle {
+  display: inline; }
