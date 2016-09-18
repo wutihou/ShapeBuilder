@@ -6,11 +6,22 @@
 		triangle:"triangle",//三角形
 		sevenpiecepuzzle:"sevenpiecepuzzle",//七巧板
 		halfcircle:"halfcircle",//半圆
-		line:"line",
+		line:"line",//直线
+		linesegment:"line",//线段
 		star:"lazyRender",//五角星
 		trapezoid:"lazyRender",//梯形
 		arrowright:"lazyRender",//右箭头
-		triangleright:"lazyRender"//直角三角形
+		triangleright:"lazyRender",//直角三角形
+		plus:"lazyRender",//加号
+		subtraction:"lazyRender",//减号
+		multiple:"lazyRender",//乘号
+		division:"lazyRender",//除号
+		equal:"lazyRender",//等号
+		morethan:"lazyRender",//大于号
+		moreequal:"lazyRender",//大于等于
+		lessthan:"lazyRender",//小于号
+		lessequal:"lazyRender",//小于等于
+		parallelogram:"lazyRender",//四边形
 	};
 	
 	var ShapeBuilder = function(selector) {
@@ -30,7 +41,7 @@
 			w = 0;
 			h = 0;
 			//强制设置外围div宽高为0
-			d.style.width = "0px", d.style.height = "0px";
+			d.style.width = "0px", d.style.height = "0px",d.style.lineHeight = 0;
 		}else{
 			throw new Error("已经是一个svg");
 		}
@@ -91,8 +102,9 @@
 	 */
 	ShapeBuilder.prototype.line = function(x1,y1,x2,y2){
 		//1、判断当前图形是否为直线
-		if(this.mOption.shapeType != supportShape.line){
-			throw new Error("当前图形不是直线!");
+		if(this.mOption.shapeType != supportShape.line && //
+			this.mOption.shapeType != "linesegment"){
+			throw new Error("当前图形不是直线或线段!");
 		}
 		//2、重绘直线
 		this.refresh(x1,y1,x2,y2);
@@ -238,6 +250,66 @@
 				str:'<svg width="150" height="150" xmlns="http://www.w3.org/2000/svg">' +
 				'<path d="m1.48501,148.39534l0,-147.39534l147.99999,147.39534l-147.99999,0z"/>' +
 				'</svg>'
+			},
+			plus:{
+				name:'plus',
+				str:'<svg width="150" height="150" xmlns="http://www.w3.org/2000/svg">' +
+				'<path d="m1.00499,49.91751l48.91252,0l0,-48.91252l50.17496,0l0,48.91252l48.91252,0l0,50.17496l-48.91252,0l0,48.91252l-50.17496,0l0,-48.91252l-48.91252,0l0,-50.17496z"/>' +
+				'</svg>'
+			},
+			subtraction:{
+				name:'subtraction',
+				str:'<svg width="150" height="150" xmlns="http://www.w3.org/2000/svg">' +
+				'<path d="m1.12676,53.28901l147.71831,0l0,43l-147.71831,0l0,-43z"/>' +
+				'</svg>'
+			},
+			multiple:{
+				name:'multiple',
+				str:'<svg width="150" height="150" xmlns="http://www.w3.org/2000/svg">' +
+				'<path d="m1.42029,37.63501l35.71028,-35.64001l37.93448,37.85952l37.93448,-37.85952l35.71062,35.64001l-37.93449,37.85983l37.93449,37.85983l-35.71062,35.64034l-37.93448,-37.85984l-37.93448,37.85984l-35.71028,-35.64034l37.93417,-37.85983l-37.93417,-37.85983z"/>' +
+				'</svg>'
+			},
+			division:{
+				name:'division',
+				str:'<svg width="150" height="150" xmlns="http://www.w3.org/2000/svg">' +
+				'<path d="m74.59414,1.97999l0,0c13.81745,0 25.01872,10.05901 25.01872,22.46742c0,12.40842 -11.20126,22.46742 -25.01872,22.46742c-13.81747,0 -25.01872,-10.05899 -25.01872,-22.46742c0,-12.40841 11.20124,-22.46742 25.01872,-22.46742zm0,146.00001c-13.81747,0 -25.01872,-10.059 -25.01872,-22.46742c0,-12.40841 11.20124,-22.46742 25.01872,-22.46742c13.81745,0 25.01872,10.059 25.01872,22.46742c0,12.40842 -11.20126,22.46742 -25.01872,22.46742zm-73.57447,-95.46742l147.14893,0l0,44.93484l-147.14893,0l0,-44.93484z"/>' +
+				'</svg>'
+			},
+			equal:{
+				name:'equal',
+				str:'<svg width="150" height="150" xmlns="http://www.w3.org/2000/svg">' +
+				'<g><path d="m1.12676,7.51123l147.71831,0l0,43l-147.71831,0l0,-43z"/><path d="m1.12676,99.9063l147.71831,0l0,43l-147.71831,0l0,-43z"/></g>' +
+				'</svg>'
+			},
+			morethan:{
+				name:'morethan',
+				str:'<svg width="150" height="150" xmlns="http://www.w3.org/2000/svg">' +
+				'<path d="m2 0 l148 75 l-148 75 l0 -30 l90 -45 -90 -45z"/>' +
+				'</svg>'
+			},
+			lessthan:{
+				name:'lessthan',
+				str:'<svg width="150" height="150" xmlns="http://www.w3.org/2000/svg">' +
+				'<path d="m148 0 l-148 75 l148 75 l0 -30 l-90 -45 l90 -45z"/>' +
+				'</svg>'
+			},
+			lessequal:{
+				name:'lessequal',
+				str:'<svg width="150" height="150" xmlns="http://www.w3.org/2000/svg">' +
+				'<g><path d="m148 0 l-148 75 l148 75 l0 -30 l-90 -45 l90 -45z"/><path d="m2 85 l130 63 l-45 0 l-85 -40z"/></g>' +
+				'</svg>'
+			},
+			moreequal:{
+				name:'moreequal',
+				str:'<svg width="150" height="150" xmlns="http://www.w3.org/2000/svg">' +
+				'<g><path d="m2 0 l148 75 l-148 75 l0 -30 l90 -45 -90 -45z"/><path d="m148 85 l-130 63 l45 0 l85 -40z"/></g>' +
+				'</svg>'
+			},
+			parallelogram:{
+				name:'parallelogram',
+				str:'<svg width="150" height="150" xmlns="http://www.w3.org/2000/svg">' +
+				'<path d="m1.49574,75.08713l73.4918,-73.82787l73.4918,73.82787l-73.4918,73.82787l-73.4918,-73.82787z"/>' +
+				'</svg>'
 			}
 		};
 
@@ -258,19 +330,29 @@
 			this.sb.mOption.wrap.appendChild(svg.node);
 			var snap = Snap(svg.node);
 			this.snap = snap;
-			this.mOption.width = snap.asPX("width");
-			this.mOption.height = snap.asPX("height");
-			this.mInstance = snap.select("path").attr(this.defaultAttr);
+			var snapWidth = snap.asPX("width");
+			var snapHeight = snap.asPX("height");
+			this.mOption.width = this.sb.mOption.width;
+			this.mOption.height = this.sb.mOption.height;
+			this.mInstance = snap.selectAll("path").attr(this.defaultAttr);
 			this.mOption.isRendered++;
+			if(snapWidth != this.mOption.width || snapHeight != this.mOption.height){
+				this.onResize(this.mOption.width,this.mOption.height);
+			}
 		};
 
 		LazyRender.prototype.afterResize = function(){
-			if(this.mInstance && this.mInstance.transform){
-				var widthRatio = this.mOption.width/this.mOption.viewBoxWidth;
-				var heightRatio = this.mOption.height/this.mOption.viewBoxHeight;
-				var m = new Snap.Matrix();
-				m.scale(widthRatio,heightRatio);
-				this.mInstance.transform(m);
+			if(this.mInstance && this.mInstance.type === "set"){
+				var self = this;
+				this.mInstance.forEach(function(element,index){
+					if(element.transform){
+						var widthRatio = self.mOption.width/self.mOption.viewBoxWidth;
+						var heightRatio = self.mOption.height/self.mOption.viewBoxHeight;
+						var m = new Snap.Matrix();
+						m.scale(widthRatio,heightRatio);
+						element.transform(m);
+					}
+				});
 			}
 		};
 
@@ -299,7 +381,6 @@
 				c:null,//圆心对应的元素对象,
 				r:2
 			};
-			this.setDefaultViewBox();
 			this.onDraw();
 		}
 		Circle.prototype = new BasicRender();
@@ -324,9 +405,24 @@
 				this.mInstance = this.snap.circle(cx,cy,r).attr(this.defaultAttr);
 				this.o.c = this.snap.circle(cx,cy,this.o.r).attr("fill-opacity",0);//圆心
 			}else{//二次渲染
-				//TODO
+				var attr = {
+					cx:cx,
+					cy:cy,
+					r:r
+				};
+				this.mInstance.attr(attr);
+				if(this.o.c){
+					attr.r = this.o.r;
+					this.o.c.attr(attr);//圆心
+				}
 			}
 			this.mOption.isRendered++;
+		};
+		Circle.prototype.afterResize = function(){
+			if(this.mInstance && this.mInstance.transform){
+				this.o.x = this.mOption.width/2,this.o.y = this.mOption.height/2;
+				this.onDraw();
+			}
 		};
 		renders[supportShape.circle] = Circle;
 		/************************圆形渲染工具end***************************/
@@ -383,7 +479,7 @@
 			var	width = clientWidth - this.defaultAttr.strokeWidth,
 				height = clientHeight - this.defaultAttr.strokeWidth;
 
-			if(this.mOption.isRendered === 0) {//初次渲染
+			if(this.mOption.isRendered === 0) {//初次渲染ly
 				this.mInstance = this.snap.rect(x,y,width,height).attr(this.defaultAttr);
 			}else{//二次渲染
 				this.mInstance.attr({
@@ -411,9 +507,9 @@
 		 */
 
 		/************************直线渲染工具start***************************/
-		function Line(sb){
+		function Line(sb,type){
 			this.super();
-			this.shapeType = supportShape.line;
+			this.shapeType = type==="linesegment"?"linesegment":supportShape.line;
 
 			var snap = Snap(sb.mOption.width,sb.mOption.height);
 			var svg = snap.node;
@@ -423,11 +519,22 @@
 				x1:0,
 				y1:0,
 				x2:0,
-				y2:0
+				y2:0,
+				terminal:{
+					start:{
+						x:0,
+						y:0,
+						c:null
+					},
+					end:{
+						x:0,
+						y:0,
+						c:null
+					}
+				}
 			};
 
 			this.snap = snap;
-			this.setDefaultViewBox();
 			this.mOption.width = snap.asPX("width");
 			this.mOption.height = snap.asPX("height");
 			this.onDraw();
@@ -452,6 +559,14 @@
 
 			if(this.mOption.isRendered === 0) {//初次渲染
 				this.mInstance = this.snap.line(x1,y1,x2,y2).attr(this.defaultAttr);
+				if(this.shapeType == "linesegment"){//如果是线段，还要画端点
+					if(x1 != x2 || y1 != y2){//只要线段长度不为0,就要画端点
+						this.line.terminal.start.x = x1,this.line.terminal.start.y = y1;
+						this.line.terminal.end.x = x2,this.line.terminal.end.y = y2;
+						this.line.terminal.start.c = this.snap.circle(this.line.terminal.start.x,this.line.terminal.start.y,this.defaultAttr.strokeWidth*2);
+						this.line.terminal.end.c = this.snap.circle(this.line.terminal.end.x,this.line.terminal.end.y,this.defaultAttr.strokeWidth*2);
+					}
+				}
 			}else{//二次渲染
 				if(this.mInstance){
 					this.mInstance.attr({
@@ -461,18 +576,65 @@
 						y2:y2
 					});
 				}
+				if(this.shapeType == "linesegment"){//如果是线段，还要画端点
+					if(x1 != x2 || y1 != y2){//只要线段长度不为0,就要画端点
+						this.line.terminal.start.x = x1,this.line.terminal.start.y = y1;
+						this.line.terminal.end.x = x2,this.line.terminal.end.y = y2;
+						var terminalRadius = this.defaultAttr.strokeWidth*3/2;
+						if(this.line.terminal.start.c){
+							this.line.terminal.start.c.attr({
+								cx:this.line.terminal.start.x,
+								cy:this.line.terminal.start.y,
+								r:terminalRadius
+							});
+						}else{
+							this.line.terminal.start.c = this.snap.circle(this.line.terminal.start.x,this.line.terminal.start.y,terminalRadius);
+						}
+						if(this.line.terminal.end.c){
+							this.line.terminal.end.c.attr({
+								cx:this.line.terminal.end.x,
+								cy:this.line.terminal.end.y,
+								r:terminalRadius
+							});
+						}else{
+							this.line.terminal.end.c = this.snap.circle(this.line.terminal.end.x,this.line.terminal.end.y,terminalRadius);
+						}
+					}
+				}
 			}
 			this.mOption.isRendered++;
 		};
 		Line.prototype.onRefresh = function(x1,y1,x2,y2){
-			this.line.x1 = x1;
-			this.line.y1 = y1;
-			this.line.x2 = x2;
-			this.line.y2 = y2;
+			var w = Math.abs(x1 - x2),h = Math.abs(y1 - y2);
+			this.snap.attr({
+				width:w===0?this.defaultAttr.strokeWidth*4:w,
+				height:h===0?this.defaultAttr.strokeWidth*4:h
+			});
+			if(x2 > x1){
+				this.line.x1 = this.defaultAttr.strokeWidth;
+				this.line.x2 = w - this.defaultAttr.strokeWidth;
+			}else if(x1 == x2){
+				this.line.x1 = this.defaultAttr.strokeWidth*2;
+				this.line.x2 = this.defaultAttr.strokeWidth*2;
+			}else{
+				this.line.x1 = w - this.defaultAttr.strokeWidth;
+				this.line.x2 = this.defaultAttr.strokeWidth;
+			}
+
+			if(y2 > y1){
+				this.line.y1 = this.defaultAttr.strokeWidth;
+				this.line.y2 = h - this.defaultAttr.strokeWidth;
+			}else if(y1 == y2){
+				this.line.y1 = this.defaultAttr.strokeWidth*2;
+				this.line.y2 = this.defaultAttr.strokeWidth*2;
+			}else{
+				this.line.y1 = h - this.defaultAttr.strokeWidth;
+				this.line.y2 = this.defaultAttr.strokeWidth;
+			}
 			this.onDraw();
 		};
 		renders[supportShape.line] = Line;
-		/************************直线渲染工具end***************************/
+		/************************直线渲染工具end************************linesegment***/
 		
 		/*
 		 *
