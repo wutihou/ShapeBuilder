@@ -21,22 +21,32 @@
 		moreequal:"lazyRender",//大于等于
 		lessthan:"lazyRender",//小于号
 		lessequal:"lazyRender",//小于等于
-		parallelogram:"lazyRender",//四边形
+		parallelogram:"lazyRender"//四边形
 	};
-	
-	var ShapeBuilder = function(selector) {
+
+	/**
+	 * 构造函数
+	 * @param arg可以是一个选择器或dom对象
+	 * @constructor
+	 */
+	var ShapeBuilder = function(arg) {
 		if (!window.Snap) {
 			throw new Error("缺少Snap.svg库");
 		}
-		this._initSb(selector);
+		this._initSb(arg);
 	};
 	
 	/**
 	 * 初始化
 	 */
-	ShapeBuilder.prototype._initSb = function(selector){
-		var svg, w, h,
-			d = document.querySelector(selector);
+	ShapeBuilder.prototype._initSb = function(arg){
+		var svg, w, h,d;
+			//
+		if((typeof arg === "object") && (arg instanceof HTMLElement)){
+			d = arg;
+		}else if((typeof arg === "string")) {
+			d = document.querySelector(arg)
+		}
 		if (d && d.tagName.toLowerCase() != "svg") { //传入的不是一个svg标签，就需要手动创建svg标签
 			w = 0;
 			h = 0;
@@ -65,7 +75,7 @@
 			throw new Error("不支持该形状");
 		}
 		if(this.mOption.shapeType == shape){
-			return;
+			return this;
 		}else{
 			if(this.mRender && this.mRender.clearAll){
 				this.mRender.clearAll();
@@ -73,6 +83,7 @@
 			this.mRender = new Render[this.supportShape[shape]](this,shape);
 			this.mOption.shapeType = this.mRender.getShapeType();
 		}
+		return this;
 	};
 
 	/**
@@ -83,12 +94,16 @@
 		if(this.mRender && this.mRender.onResize){
 			this.mRender.onResize.call(this.mRender,width,height);
 		}else{
-			//throw new Error("图形尚未绘制");
 			this.mOption.width = width;
 			this.mOption.height = height;
 		}
+		return this;
 	};
 
+	/**
+	 * 获取子图形
+	 * @returns {*}
+	 */
 	ShapeBuilder.prototype.getChildren = function(){
 		if(this.mRender && this.mRender.getChildren){
 			return this.mRender.getChildren.call(this.mRender);
@@ -108,6 +123,7 @@
 		}
 		//2、重绘直线
 		this.refresh(x1,y1,x2,y2);
+		return this;
 	};
 
 	/**
@@ -118,6 +134,7 @@
 		if(this.mRender.onRefresh){
 			this.mRender.onRefresh.apply(this.mRender,arguments);
 		}
+		return this;
 	};
 	
 	/**
@@ -126,6 +143,16 @@
 	 */
 	ShapeBuilder.prototype.fill = function(color){
 		this.mRender.fill(color);
+		return this;
+	};
+
+	/**
+	 * 改变边框颜色
+	 * @param {Object} color
+	 */
+	ShapeBuilder.prototype.stroke = function(color){
+		this.mRender.stroke(color);
+		return this;
 	};
 
 	this.ShapeBuilder = ShapeBuilder;
@@ -166,6 +193,16 @@
 		};
 
 		/**
+		 * 改变边框颜色
+		 * @param {Object} color
+		 */
+		BasicRender.prototype.stroke = function(color){
+			if(this.mInstance && this.onStroke){
+				this.onStroke(color);
+			}
+		};
+
+		/**
 		 * 填充颜色实现
 		 * @param color
 		 */
@@ -173,6 +210,18 @@
 			if(this.mInstance){
 				this.mInstance.attr({
 					fill:color
+				});
+			}
+		};
+
+		/**
+		 * 填充颜色实现
+		 * @param color
+		 */
+		BasicRender.prototype.onStroke = function(color){
+			if(this.mInstance){
+				this.mInstance.attr({
+					stroke:color
 				});
 			}
 		};
@@ -308,7 +357,7 @@
 			parallelogram:{
 				name:'parallelogram',
 				str:'<svg width="150" height="150" xmlns="http://www.w3.org/2000/svg">' +
-				'<path d="m1.49574,75.08713l73.4918,-73.82787l73.4918,73.82787l-73.4918,73.82787l-73.4918,-73.82787z"/>' +
+				'<path d="m75,2l-73,146l73,0l73,-146l-73,0z"/>' +
 				'</svg>'
 			}
 		};
@@ -750,7 +799,7 @@
 
 			//this.setDefaultViewBox();
 			this.subGraph = {//定义7个子图
-				sub1:{
+				sub0:{
 					points:[
 						{
 							x:0,
@@ -776,7 +825,7 @@
 					c:null,
 					snap:null
 				},
-				sub2:{
+				sub1:{
 					points:[
 						{
 							x:0,
@@ -802,7 +851,7 @@
 					c:null,
 					snap:null
 				},
-				sub3:{
+				sub2:{
 					points:[
 						{
 							x:0,
@@ -832,7 +881,7 @@
 					c:null,
 					snap:null
 				},
-				sub4:{
+				sub3:{
 					points:[
 						{
 							x:0,
@@ -858,7 +907,7 @@
 					c:null,
 					snap:null
 				},
-				sub5:{
+				sub4:{
 					points:[
 						{
 							x:0,
@@ -888,7 +937,7 @@
 					c:null,
 					snap:null
 				},
-				sub6:{
+				sub5:{
 					points:[
 						{
 							x:0,
@@ -914,7 +963,7 @@
 					c:null,
 					snap:null
 				},
-				sub7:{
+				sub6:{
 					points:[
 						{
 							x:0,
@@ -941,6 +990,7 @@
 					snap:null
 				}
 			};
+			this.children = [];
 			this.mOption.width = sb.mOption.width;
 			this.mOption.height = sb.mOption.height;
 			this.mOption.size = Math.max(this.mOption.width,this.mOption.height);
@@ -970,7 +1020,7 @@
 		 * 获取子块
 		 */
 		Sevenpiecepuzzle.prototype.getChildren = function(){
-			if(this.children){
+			if(this.children && this.children.length==7){
 				return this.children;
 			}
 			var subGraph,ele,wrap,result = [];
@@ -1045,16 +1095,100 @@
 					}
 					this.defaultAttr.fill = s.fill;
 					this.defaultAttr.key = sub;
-					s.c = snap.path(path).attr(this.defaultAttr).click(clickSubGraph,this);
+					s.c = snap.path(path).attr(this.defaultAttr);
+					s.c.addClass("pointevent_auto");
 					s.c.attr({oriWidth:s.width,oriHeight: s.height});
+					this.children.push(new SubGraph(s.c,s.wrap,snap));
+					s.c.mousedown(this.innerEvent.actionStart,this).touchstart(this.innerEvent.actionStart,this)
+						.touchmove(this.innerEvent.actionMove,this).touchend(this.innerEvent.actionEnd,this);
 				}
 			}else{//二次渲染
 			}
 			this.mOption.isRendered++;
+		};
+		Sevenpiecepuzzle.prototype.innerEvent = {
+			targetSubGraph:null,
+			shadowClass:"svgDragShadow",
+			actionStart:function(ev){//mousedown,touchstart
+				var target = ev.target;
+				var x = ev.clientX?ev.clientX:ev.touches[0].clientX,y = ev.clientY?ev.clientY:ev.touches[0].clientY;
+				var key = target.getAttribute("key");
+				var subGraph;
+				if(key.length > 0){
+					var index = parseInt(key.substring("sub".length));
+					subGraph = this.children[index];
+					var l = parseFloat(subGraph.mWrap.style.left),t = parseFloat(subGraph.mWrap.style.top);
+					target.setAttribute("startLeft",l);
+					target.setAttribute("startTop",t);
+					subGraph.mWrap.style.zIndex = "10";
+				}
+				target.setAttribute("action","true");
+				target.setAttribute("actionStartX",x);
+				target.setAttribute("actionStartY",y);
 
-			function clickSubGraph(ev){
-				var key = ev.target.getAttribute("key");
-				this.mOption.focus = this.subGraph[key].c;
+				if(ev.type == "mousedown"){
+					var shadow = createShadow(this);//创建全屏遮罩，监听后续事件
+					this.innerEvent.targetSubGraph = subGraph;
+					shadow.addEventListener("mousemove",this.innerEvent.actionMove.bind(this));
+					shadow.addEventListener("mouseup",this.innerEvent.actionEnd.bind(this));
+				}
+
+				function createShadow(context){
+					var shadow = document.createElement("div");
+					shadow.className = context.innerEvent.shadowClass;
+					shadow.style.position = "fixed";
+					shadow.style.width = "100%";
+					shadow.style.height = "100%";
+					shadow.style.zIndex = "9999";
+					var body = document.querySelector("body");
+					body.appendChild(shadow);
+					return shadow;
+				}
+			},
+			actionMove:function(ev){
+				var isMouseEvent = (ev instanceof MouseEvent)?true:false;
+				var target = isMouseEvent?this.innerEvent.targetSubGraph.mElement.node:ev.target;
+
+				var x = ev.clientX?ev.clientX:ev.touches[0].clientX,y = ev.clientY?ev.clientY:ev.touches[0].clientY;
+				var action = target.getAttribute("action");
+				var key = target.getAttribute("key");
+				if(action === "true" && key.length > 0){
+					var index = parseInt(key.substring("sub".length));
+					var subGraph = this.children[index];
+					if(subGraph && subGraph.move){
+						var actionStartX = parseFloat(target.getAttribute("actionStartX"));
+						var actionStartY = parseFloat(target.getAttribute("actionStartY"));
+						var startLeft = parseFloat(target.getAttribute("startLeft"));
+						var startTop = parseFloat(target.getAttribute("startTop"));
+						var targetLeft = x-actionStartX + startLeft;
+						var targetTop = y-actionStartY + startTop;
+						subGraph.mWrap.style.left = targetLeft + "px";
+						subGraph.mWrap.style.top = targetTop + "px";
+						subGraph.move(x-actionStartX,y-actionStartY);
+					}
+				}
+			},
+			actionEnd:function(ev){
+				var isMouseEvent = (ev instanceof MouseEvent)?true:false;
+				var target = isMouseEvent?this.innerEvent.targetSubGraph.mElement.node:ev.target;
+
+				target.removeAttribute("action");
+				target.removeAttribute("startLeft");
+				target.removeAttribute("startTop");
+				target.removeAttribute("actionStartX");
+				target.removeAttribute("actionStartY");
+
+				if(isMouseEvent){
+					removeShadow(this);
+				}
+
+				function removeShadow(context){
+					var shadow = document.querySelector("." + context.innerEvent.shadowClass);
+					var body = document.querySelector("body");
+					shadow.removeEventListener("mousemove",context.innerEvent.actionMove.bind(this));
+					shadow.removeEventListener("mouseup",context.innerEvent.actionEnd.bind(this));
+					body.removeChild(shadow);
+				}
 			}
 		};
 		renders[supportShape.sevenpiecepuzzle] = Sevenpiecepuzzle;
@@ -1114,11 +1248,24 @@
 				path += "z";
 				this.defaultAttr.fill = "#fff";
 				this.mInstance = this.snap.path(path).attr(this.defaultAttr);
-				this.snap.drag();
 			}else{//二次渲染
-
+				path = "m " + this.defaultAttr.strokeWidth/2 + " " + this.defaultAttr.strokeWidth/2;//起点
+				path += " a ";
+				path += (width-this.defaultAttr.strokeWidth*2) + " ";//长半轴
+				path += (height - this.defaultAttr.strokeWidth)/2 + " ";//短半轴
+				path += "0 1 1" + " ";//旋转参数
+				path += this.defaultAttr.strokeWidth/2 + " ";
+				path += (height - this.defaultAttr.strokeWidth) + " ";
+				path += "z";
+				this.defaultAttr.fill = "#fff";
+				this.mInstance.attr({
+					d:path
+				});
 			}
 			this.mOption.isRendered++;
+		};
+		Halfcircle.prototype.afterResize = function(){
+			this.onDraw();
 		};
 		renders[supportShape.halfcircle] = Halfcircle;
 		/************************半圆渲染工具end***************************/
@@ -1141,6 +1288,15 @@
 					fill:color
 				});
 			}
+			return this;
+		};
+		SubGraph.prototype.stroke = function(color){
+			if(this.mElement){
+				this.mElement.attr({
+					stroke:color
+				});
+			}
+			return this;
 		};
 		SubGraph.prototype.getDom = function(){
 			return this.mWrap;
@@ -1161,6 +1317,23 @@
 				m.scale(widthRatio,heightRatio);
 				this.mElement.transform(m);
 			}
+		};
+
+		/**
+		 * onMove
+		 * @param
+		 */
+		SubGraph.prototype.onMove = function(fn){
+			if(fn && (typeof fn == "function")){
+				this.moveCallback = fn;
+			}
+			return this;
+		};
+		SubGraph.prototype.move = function(translateX,translateY){
+			if(this.moveCallback && (typeof this.moveCallback == "function")){
+				this.moveCallback(translateX,translateY);
+			}
+			return this;
 		};
 		/************************字块包装类end***************************/
 		return renders;
