@@ -8,9 +8,16 @@
 		halfcircle:"halfcircle",//半圆
 		line:"line",//直线
 		linesegment:"line",//线段
+		linehorizontal:"line",//水平线
+		linevertical:"line",//垂直线
+		dashline:"line",//虚线
+		arrowright:"arrow",//右箭头
+		arrowleft:"arrow",//左箭头
+		arrowup:"arrow",//上箭头
+		arrowdown:"arrow",//下箭头
+		arrowdouble:"arrow",//双向箭头
 		star:"lazyRender",//五角星
 		trapezoid:"lazyRender",//梯形
-		arrowright:"lazyRender",//右箭头
 		triangleright:"lazyRender",//直角三角形
 		plus:"lazyRender",//加号
 		subtraction:"lazyRender",//减号
@@ -35,7 +42,7 @@
 		}
 		this._initSb(arg);
 	};
-	
+
 	/**
 	 * 初始化
 	 */
@@ -117,8 +124,11 @@
 	 */
 	ShapeBuilder.prototype.line = function(x1,y1,x2,y2){
 		//1、判断当前图形是否为直线
-		if(this.mOption.shapeType != supportShape.line && //
-			this.mOption.shapeType != "linesegment"){
+		if(this.mOption.shapeType != "line" && //
+			this.mOption.shapeType != "linesegment"//
+			&& this.mOption.shapeType != "dashline"//
+			&& this.mOption.shapeType != "linehorizontal"//
+			&& this.mOption.shapeType != "linevertical"){
 			throw new Error("当前图形不是直线或线段!");
 		}
 		//2、重绘直线
@@ -555,10 +565,140 @@
 		 *
 		 */
 
+		/************************右箭头渲染工具start***************************/
+		function Arrow(sb,type){
+			this.super();
+			this.shapeType = type;
+
+			var snap = Snap(sb.mOption.width,sb.mOption.height);
+			var svg = snap.node;
+			sb.mOption.wrap.appendChild(svg);
+
+			this.snap = snap;
+			this.mOption.width = snap.asPX("width");
+			this.mOption.height = snap.asPX("height");
+			this.onDraw();
+		}
+		Arrow.prototype = new BasicRender();
+
+		/**
+		 * 清空
+		 */
+		Arrow.prototype.clearAll = function(){
+			if(this.mInstance){
+				this.mInstance.remove();
+			}
+		};
+
+		Arrow.prototype.afterResize = function(){
+			this.onDraw();
+		};
+
+		Arrow.prototype.onDraw = function(){
+			this.mOption.isRendered++;
+
+			var clientWidth = this.mOption.width,
+				clientHeight = this.mOption.height;
+			var	strokeWidth = this.defaultAttr.strokeWidth;
+			var path;
+			if(this.buildPath[this.shapeType]){
+				path = this.buildPath[this.shapeType].call(this,clientWidth,clientHeight,strokeWidth);
+			}
+			if(path){
+				if(this.mOption.isRendered === 0) {//初次渲染
+					this.mInstance = this.snap.path(path).attr(this.defaultAttr);
+				}else{//二次渲染
+					this.mInstance.attr({
+						d:path
+					});
+				}
+				this.mOption.isRendered++;
+			}
+		};
+		Arrow.prototype.buildPath = {
+			arrowright:function(clientWidth,clientHeight,strokeWidth){
+				var path;
+				path = "m " + strokeWidth + " " + (clientHeight/3);
+				path += " l " + (clientWidth - clientHeight/3) + " 0";
+				path += " l 0 " + (-clientHeight /3 + strokeWidth);
+				path += " l " + (clientHeight /3 - strokeWidth*2) + " " + (clientHeight/2 - strokeWidth);
+				path += " l " + (-clientHeight /3 + strokeWidth*2) + " " + (clientHeight/2 - strokeWidth);
+				path += " l 0 " + (-clientHeight/3 + strokeWidth);
+				path += " l " + (clientHeight/3 - clientWidth) + " 0";
+				path += " z";
+				return path;
+			},
+			arrowleft:function(clientWidth,clientHeight,strokeWidth){
+				var path;
+				path = "m " + strokeWidth + " " + (clientHeight/2);
+				path += " l " + (clientHeight/3) + " " + (-clientHeight/2 + strokeWidth);
+				path += " l 0 " + (clientHeight /3 - strokeWidth);
+				path += " l " + (clientWidth - clientHeight/3 - strokeWidth*2) + " 0";
+				path += " l 0 " + (clientHeight/3);
+				path += " l " + (-clientWidth + clientHeight/3 + strokeWidth*2) + " 0";
+				path += " l 0 " + (clientHeight/3 - strokeWidth*2);
+				path += " z";
+				return path;
+			},
+			arrowup:function(clientWidth,clientHeight,strokeWidth){
+				var path;
+				path = "m " + strokeWidth + " " + (clientWidth/3);
+				path += " l " + (clientWidth/2 - strokeWidth) + " " + (-clientWidth/3 + strokeWidth);
+				path += " l " + (clientWidth/2 - strokeWidth) + " " + (clientWidth/3 - strokeWidth);
+				path += " l " + (-clientWidth/3) + " 0";
+				path += " l 0 " + (clientHeight - clientWidth/3 - strokeWidth);
+				path += " l " + (-clientWidth/3) + " 0";
+				path += " l 0 " + (-clientHeight + clientWidth/3 + strokeWidth);
+				path += " z";
+				return path;
+			},
+			arrowdown:function(clientWidth,clientHeight,strokeWidth){
+				var path;
+				path = "m " + strokeWidth + " " + (clientHeight - clientWidth/3);
+				path += " l " + (clientWidth/3 - strokeWidth) + " 0";
+				path += " l 0 " + (-clientHeight + clientWidth/3 + strokeWidth);
+				path += " l " + (clientWidth/3) + " 0";
+				path += " l 0 " + (clientHeight - clientWidth/3 - strokeWidth);
+				path += " l " + (clientWidth/3 - strokeWidth) + " 0";
+				path += " l " + (-clientWidth/2 + strokeWidth) + " " + (clientWidth/3 - strokeWidth);
+				path += " z";
+				return path;
+			},
+			arrowdouble:function(clientWidth,clientHeight,strokeWidth){
+				var path;
+				path = "m " + strokeWidth + " " + (clientHeight/2);
+				path += " l " + (clientHeight/3) + " " + (-clientHeight/2 + strokeWidth);
+				path += " l 0 " + (clientHeight /3 - strokeWidth);
+				path += " l " + (clientWidth - clientHeight*2/3 - strokeWidth*2) + " 0";
+				path += " l 0 " + (-clientHeight/3);
+				path += " l " + (clientHeight/3) + " " + (clientHeight/2);
+				path += " l " + (-clientHeight/3) + " " + (clientHeight/2);
+				path += " l 0 " + (-clientHeight/3);
+				path += " l " + (-clientWidth + clientHeight*2/3 + strokeWidth*2) + " 0";
+				path += " l 0 " + (clientHeight /3 - strokeWidth);
+				path += " z";
+				return path;
+			}
+		};
+		renders["arrow"] = Arrow;
+		/************************右箭头渲染工具end***************************/
+
+		/*
+		 *
+		 *
+		 *
+		 *
+		 *
+		 *
+		 *
+		 *
+		 *
+		 */
+
 		/************************直线渲染工具start***************************/
 		function Line(sb,type){
 			this.super();
-			this.shapeType = type==="linesegment"?"linesegment":supportShape.line;
+			this.shapeType = type;
 
 			var snap = Snap(sb.mOption.width,sb.mOption.height);
 			var svg = snap.node;
@@ -586,6 +726,32 @@
 			this.snap = snap;
 			this.mOption.width = snap.asPX("width");
 			this.mOption.height = snap.asPX("height");
+
+			//对水平线和竖直线做一些处理
+			if(type == "linehorizontal"){
+				//设置svg宽高
+				this.snap.attr({
+					width:this.mOption.width,
+					height:this.defaultAttr.strokeWidth*4
+				});
+				this.line.x1 = 0;
+				this.line.x2 = this.mOption.width;
+
+				this.line.y1 = this.defaultAttr.strokeWidth;
+				this.line.y2 = this.defaultAttr.strokeWidth;
+			}else if(type == "linevertical"){
+                //设置svg宽高
+				this.snap.attr({
+					width:this.defaultAttr.strokeWidth*4,
+					height:this.mOption.height
+				});
+				this.line.x1 = this.defaultAttr.strokeWidth;
+				this.line.x2 = this.defaultAttr.strokeWidth;
+
+				this.line.y1 = 0;
+				this.line.y2 = this.mOption.height;
+			}
+
 			this.onDraw();
 		}
 		Line.prototype = new BasicRender();
@@ -605,16 +771,22 @@
 				y1 = this.line.y1,
 				x2 = this.line.x2,
 				y2 = this.line.y2;
+			var terminalAttr = {
+				"fill-opacity":this.shapeType == "linesegment"?1:0
+			};
+
+			if(this.shapeType == "dashline"){//如果是虚线
+				this.defaultAttr["stroke-dasharray"] = this.defaultAttr.strokeWidth*2 + "," + this.defaultAttr.strokeWidth*2;
+			}
 
 			if(this.mOption.isRendered === 0) {//初次渲染
 				this.mInstance = this.snap.line(x1,y1,x2,y2).attr(this.defaultAttr);
-				if(this.shapeType == "linesegment"){//如果是线段，还要画端点
-					if(x1 != x2 || y1 != y2){//只要线段长度不为0,就要画端点
-						this.line.terminal.start.x = x1,this.line.terminal.start.y = y1;
-						this.line.terminal.end.x = x2,this.line.terminal.end.y = y2;
-						this.line.terminal.start.c = this.snap.circle(this.line.terminal.start.x,this.line.terminal.start.y,this.defaultAttr.strokeWidth*2);
-						this.line.terminal.end.c = this.snap.circle(this.line.terminal.end.x,this.line.terminal.end.y,this.defaultAttr.strokeWidth*2);
-					}
+
+				if(x1 != x2 || y1 != y2){//只要长度不为0,就要画端点
+					this.line.terminal.start.x = x1,this.line.terminal.start.y = y1;
+					this.line.terminal.end.x = x2,this.line.terminal.end.y = y2;
+					this.line.terminal.start.c = this.snap.circle(this.line.terminal.start.x,this.line.terminal.start.y,this.defaultAttr.strokeWidth*2).attr(terminalAttr);
+					this.line.terminal.end.c = this.snap.circle(this.line.terminal.end.x,this.line.terminal.end.y,this.defaultAttr.strokeWidth*2).attr(terminalAttr);
 				}
 			}else{//二次渲染
 				if(this.mInstance){
@@ -625,29 +797,27 @@
 						y2:y2
 					});
 				}
-				if(this.shapeType == "linesegment"){//如果是线段，还要画端点
-					if(x1 != x2 || y1 != y2){//只要线段长度不为0,就要画端点
-						this.line.terminal.start.x = x1,this.line.terminal.start.y = y1;
-						this.line.terminal.end.x = x2,this.line.terminal.end.y = y2;
-						var terminalRadius = this.defaultAttr.strokeWidth*3/2;
-						if(this.line.terminal.start.c){
-							this.line.terminal.start.c.attr({
-								cx:this.line.terminal.start.x,
-								cy:this.line.terminal.start.y,
-								r:terminalRadius
-							});
-						}else{
-							this.line.terminal.start.c = this.snap.circle(this.line.terminal.start.x,this.line.terminal.start.y,terminalRadius);
-						}
-						if(this.line.terminal.end.c){
-							this.line.terminal.end.c.attr({
-								cx:this.line.terminal.end.x,
-								cy:this.line.terminal.end.y,
-								r:terminalRadius
-							});
-						}else{
-							this.line.terminal.end.c = this.snap.circle(this.line.terminal.end.x,this.line.terminal.end.y,terminalRadius);
-						}
+				if(x1 != x2 || y1 != y2){//只要长度不为0,就要画端点
+					this.line.terminal.start.x = x1,this.line.terminal.start.y = y1;
+					this.line.terminal.end.x = x2,this.line.terminal.end.y = y2;
+					var terminalRadius = this.defaultAttr.strokeWidth*3/2;
+					if(this.line.terminal.start.c){
+						this.line.terminal.start.c.attr({
+							cx:this.line.terminal.start.x,
+							cy:this.line.terminal.start.y,
+							r:terminalRadius
+						});
+					}else{
+						this.line.terminal.start.c = this.snap.circle(this.line.terminal.start.x,this.line.terminal.start.y,terminalRadius).attr(terminalAttr);
+					}
+					if(this.line.terminal.end.c){
+						this.line.terminal.end.c.attr({
+							cx:this.line.terminal.end.x,
+							cy:this.line.terminal.end.y,
+							r:terminalRadius
+						});
+					}else{
+						this.line.terminal.end.c = this.snap.circle(this.line.terminal.end.x,this.line.terminal.end.y,terminalRadius).attr(terminalAttr);
 					}
 				}
 			}

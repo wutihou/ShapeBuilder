@@ -31,6 +31,30 @@ arrowright.setShape("arrowright");
 arrowright.fill("#73a093");
 arrowright.stroke("#ff0000");
 
+var arrowleft = new ShapeBuilder(".svg-container#arrowleft");
+arrowleft.setSize(150,150);
+arrowleft.setShape("arrowleft");
+arrowleft.fill("#73a093");
+arrowleft.stroke("#ff0000");
+
+var arrowup = new ShapeBuilder(".svg-container#arrowup");
+arrowup.setSize(150,150);
+arrowup.setShape("arrowup");
+arrowup.fill("#73a093");
+arrowup.stroke("#ff0000");
+
+var arrowdown = new ShapeBuilder(".svg-container#arrowdown");
+arrowdown.setSize(150,150);
+arrowdown.setShape("arrowdown");
+arrowdown.fill("#73a093");
+arrowdown.stroke("#ff0000");
+
+var arrowdouble = new ShapeBuilder(".svg-container#arrowdouble");
+arrowdouble.setSize(150,150);
+arrowdouble.setShape("arrowdouble");
+arrowdouble.fill("#73a093");
+arrowdouble.stroke("#ff0000");
+
 var triangleright = new ShapeBuilder(".svg-container#triangleright");
 triangleright.setSize(150,150);
 triangleright.setShape("triangleright");
@@ -46,12 +70,26 @@ children[0].onMove(function(x,y){
 });
 
 var line = new ShapeBuilder(".svg-container#line");
-line.setShape("line").line(0,50,150,50).stroke("#ff0000");
+line.setSize(150,150);
+line.setShape("line").line(0,0,150,150).stroke("#ff0000");
+
+var linehorizontal = new ShapeBuilder(".svg-container#linehorizontal");
+linehorizontal.setSize(150,150);
+linehorizontal.setShape("linehorizontal").stroke("#ff0000");
+
+var linevertical = new ShapeBuilder(".svg-container#linevertical");
+linevertical.setSize(150,150);
+linevertical.setShape("linevertical").stroke("#ff0000");
 
 var linesegment = new ShapeBuilder(".svg-container#linesegment");
 linesegment.setShape("linesegment");
 linesegment.line(150,0,0,150);
 linesegment.stroke("#ff0000");
+
+var dashline = new ShapeBuilder(".svg-container#dashline");
+dashline.setShape("dashline");
+dashline.line(150,0,0,150);
+dashline.stroke("#ff0000");
 
 var halfcircle = new ShapeBuilder(".svg-container#halfcircle");
 halfcircle.setSize(424,189);
