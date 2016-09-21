@@ -28,7 +28,14 @@
 		moreequal:"lazyRender",//大于等于
 		lessthan:"lazyRender",//小于号
 		lessequal:"lazyRender",//小于等于
-		parallelogram:"lazyRender"//四边形
+		parallelogram:"lazyRender",//四边形
+		sevenpiece_sub1:"sevenpiece",//七巧板子图1
+		sevenpiece_sub2:"sevenpiece",//七巧板子图2
+		sevenpiece_sub3:"sevenpiece",//七巧板子图3
+		sevenpiece_sub4:"sevenpiece",//七巧板子图4
+		sevenpiece_sub5:"sevenpiece",//七巧板子图5
+		sevenpiece_sub6:"sevenpiece",//七巧板子图6
+		sevenpiece_sub7:"sevenpiece"//七巧板子图7
 	};
 
 	/**
@@ -72,6 +79,7 @@
 		};//配置参数
 		this.mRender = null;//渲染器，默认圆形
 	};
+
 	
 	/**
 	 * 设置当前形状
@@ -565,6 +573,154 @@
 		 *
 		 */
 
+		/************************七巧板子图渲染工具start***************************/
+
+		function Sevenpiece(sb,type){
+			this.super();
+			this.shapeType = type;
+
+			var snap = Snap(sb.mOption.width,sb.mOption.height);
+			var svg = snap.node;
+			sb.mOption.wrap.appendChild(svg);
+
+			this.snap = snap;
+			this.mOption.width = snap.asPX("width");
+			this.mOption.height = snap.asPX("height");
+			this.onDraw();
+		}
+
+		Sevenpiece.prototype = new BasicRender();
+
+		/**
+		 * 清空
+		 */
+		Sevenpiece.prototype.clearAll = function(){
+			if(this.mInstance){
+				this.mInstance.remove();
+			}
+		};
+
+		Sevenpiece.prototype.afterResize = function(){
+			this.onDraw();
+		};
+
+		Sevenpiece.prototype.onDraw = function(){
+			this.mOption.isRendered++;
+
+			var clientWidth = this.mOption.width,
+				clientHeight = this.mOption.height;
+			var	strokeWidth = this.defaultAttr.strokeWidth;
+			var path;
+			if(this.buildPath[this.shapeType]){
+				path = this.buildPath[this.shapeType].call(this,clientWidth,clientHeight,strokeWidth);
+			}
+			if(path){
+				if(this.mOption.isRendered === 0) {//初次渲染
+					this.mInstance = this.snap.path(path).attr(this.defaultAttr);
+				}else{//二次渲染
+					this.mInstance.attr({
+						d:path
+					});
+				}
+				this.mOption.isRendered++;
+			}
+		};
+		Sevenpiece.prototype.buildPath = {
+			sevenpiece_sub1:function(clientWidth,clientHeight,strokeWidth){
+				var path;
+				if(clientWidth > clientHeight){
+					throw new Error("传入的宽高值无法画出图形");
+				}
+				path = "m " + strokeWidth + " " + 0;
+				path += " l 0 " + clientHeight;
+				path += " l " + (clientWidth - strokeWidth) + " " + (-clientHeight/2);
+				path += " z";
+				return path;
+			},
+			sevenpiece_sub2:function(clientWidth,clientHeight,strokeWidth){
+				var path;
+				if(clientWidth < clientHeight){
+					throw new Error("传入的宽高值无法画出图形");
+				}
+				path = "m 0 "  + strokeWidth;
+				path += " l " + (clientWidth/2) + " " + (clientHeight - strokeWidth);
+				path += " l " + (clientWidth/2) + " " + (-clientHeight + strokeWidth);
+				path += " z";
+				return path;
+			},
+			sevenpiece_sub3:function(clientWidth,clientHeight,strokeWidth){
+				var path;
+				if(clientWidth < clientHeight){
+					throw new Error("传入的宽高值无法画出图形");
+				}
+				path = "m "  + (clientHeight) + " " + strokeWidth;
+				path += " l " + (clientWidth - clientHeight) + " 0";
+				path += " l " + (-clientHeight) + " " + (clientHeight - strokeWidth*2);
+				path += " l " + (-clientWidth + clientHeight) + " 0";
+				path += " z";
+				return path;
+			},
+			sevenpiece_sub4:function(clientWidth,clientHeight,strokeWidth){
+				var path;
+				if(clientWidth < clientHeight){
+					throw new Error("传入的宽高值无法画出图形");
+				}
+				path = "m "  + (clientWidth/2) + " 0";
+				path += " l " + (-clientWidth/2) + " " + (clientHeight-strokeWidth);
+				path += " l " + (clientWidth) + " 0";
+				path += " z";
+				return path;
+			},
+			sevenpiece_sub5:function(clientWidth,clientHeight,strokeWidth){
+				var path;
+				if(clientWidth != clientHeight){
+					throw new Error("传入的宽高值无法画出图形");
+				}
+				path = "m "  + (clientWidth/2) + " 0";
+				path += " l " + (-clientWidth/2) + " " + (clientHeight/2);
+				path += " l " + (clientWidth/2) + " " + (clientHeight/2);
+				path += " l " + (clientWidth/2) + " " + (-clientHeight/2);
+				path += " z";
+				return path;
+			},
+			sevenpiece_sub6:function(clientWidth,clientHeight,strokeWidth){
+				var path;
+				if(clientWidth > clientHeight){
+					throw new Error("传入的宽高值无法画出图形");
+				}
+				path = "m "  + (clientWidth-strokeWidth) + " 0";
+				path += " l " + (-clientWidth+strokeWidth) + " " + (clientHeight/2);
+				path += " l " + (clientWidth-strokeWidth) + " " + (clientHeight/2);
+				path += " z";
+				return path;
+			},
+			sevenpiece_sub7:function(clientWidth,clientHeight,strokeWidth){
+				var path;
+				if(clientWidth != clientHeight){
+					throw new Error("传入的宽高值无法画出图形");
+				}
+				path = "m "  + (clientWidth-strokeWidth) + " 0";
+				path += " l " + (-clientWidth+strokeWidth) + " " + (clientHeight-strokeWidth);
+				path += " l " + (clientWidth-strokeWidth) + " 0";
+				path += " z";
+				return path;
+			}
+		};
+		renders["sevenpiece"] = Sevenpiece;
+		/************************七巧板子图渲染工具end***************************/
+
+		/*
+		 *
+		 *
+		 *
+		 *
+		 *
+		 *
+		 *
+		 *
+		 *
+		 */
+
 		/************************右箭头渲染工具start***************************/
 		function Arrow(sb,type){
 			this.super();
@@ -734,8 +890,8 @@
 					width:this.mOption.width,
 					height:this.defaultAttr.strokeWidth*4
 				});
-				this.line.x1 = 0;
-				this.line.x2 = this.mOption.width;
+				this.line.x1 = this.defaultAttr.strokeWidth;
+				this.line.x2 = this.mOption.width-this.defaultAttr.strokeWidth;
 
 				this.line.y1 = this.defaultAttr.strokeWidth;
 				this.line.y2 = this.defaultAttr.strokeWidth;
@@ -748,8 +904,8 @@
 				this.line.x1 = this.defaultAttr.strokeWidth;
 				this.line.x2 = this.defaultAttr.strokeWidth;
 
-				this.line.y1 = 0;
-				this.line.y2 = this.mOption.height;
+				this.line.y1 = this.defaultAttr.strokeWidth;
+				this.line.y2 = this.mOption.height-this.defaultAttr.strokeWidth;
 			}
 
 			this.onDraw();
@@ -787,6 +943,8 @@
 					this.line.terminal.end.x = x2,this.line.terminal.end.y = y2;
 					this.line.terminal.start.c = this.snap.circle(this.line.terminal.start.x,this.line.terminal.start.y,this.defaultAttr.strokeWidth*2).attr(terminalAttr);
 					this.line.terminal.end.c = this.snap.circle(this.line.terminal.end.x,this.line.terminal.end.y,this.defaultAttr.strokeWidth*2).attr(terminalAttr);
+					this.line.terminal.start.c.attr({"key":"start"});
+					this.line.terminal.end.c.attr({"key":"end"});
 				}
 			}else{//二次渲染
 				if(this.mInstance){

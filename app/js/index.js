@@ -156,3 +156,38 @@ var parallelogram = new ShapeBuilder(".svg-container#parallelogram");
 parallelogram.setSize(150,150);
 parallelogram.setShape("parallelogram");
 parallelogram.fill("#73a093");
+
+var sevenpiece_sub1 = new ShapeBuilder(".svg-container#sevenpiece_sub1");
+sevenpiece_sub1.setSize(75,150);
+sevenpiece_sub1.setShape("sevenpiece_sub1");
+sevenpiece_sub1.fill("#73a093");
+
+var sevenpiece_sub2 = new ShapeBuilder(".svg-container#sevenpiece_sub2");
+sevenpiece_sub2.setSize(150,75);
+sevenpiece_sub2.setShape("sevenpiece_sub2");
+sevenpiece_sub2.fill("#73a093");
+
+var sevenpiece_sub3 = new ShapeBuilder(".svg-container#sevenpiece_sub3");
+sevenpiece_sub3.setSize(112.5,37.5);
+sevenpiece_sub3.setShape("sevenpiece_sub3");
+sevenpiece_sub3.fill("#73a093");
+
+var sevenpiece_sub4 = new ShapeBuilder(".svg-container#sevenpiece_sub4");
+sevenpiece_sub4.setSize(75,37.5);
+sevenpiece_sub4.setShape("sevenpiece_sub4");
+sevenpiece_sub4.fill("#73a093");
+
+var sevenpiece_sub5 = new ShapeBuilder(".svg-container#sevenpiece_sub5");
+sevenpiece_sub5.setSize(75,75);
+sevenpiece_sub5.setShape("sevenpiece_sub5");
+sevenpiece_sub5.fill("#73a093");
+
+var sevenpiece_sub6 = new ShapeBuilder(".svg-container#sevenpiece_sub6");
+sevenpiece_sub6.setSize(37.5,75);
+sevenpiece_sub6.setShape("sevenpiece_sub6");
+sevenpiece_sub6.fill("#73a093");
+
+var sevenpiece_sub7 = new ShapeBuilder(".svg-container#sevenpiece_sub7");
+sevenpiece_sub7.setSize(75,75);
+sevenpiece_sub7.setShape("sevenpiece_sub7");
+sevenpiece_sub7.fill("#73a093");
