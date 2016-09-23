@@ -631,10 +631,15 @@
 				if(clientWidth > clientHeight){
 					throw new Error("传入的宽高值无法画出图形");
 				}
-				path = "m " + strokeWidth + " " + 0;
+				/*path = "m " + strokeWidth + " " + 0;
 				path += " l 0 " + clientHeight;
 				path += " l " + (clientWidth - strokeWidth) + " " + (-clientHeight/2);
-				path += " z";
+				path += " z";*/
+				var offset = strokeWidth/2;
+				path = "M " + offset + " " + offset;
+				path += " L " + (clientWidth) + " " + clientHeight/2;
+				path += " L " + offset + " " + clientHeight;
+				path += " Z";
 				return path;
 			},
 			sevenpiece_sub2:function(clientWidth,clientHeight,strokeWidth){
@@ -642,10 +647,15 @@
 				if(clientWidth < clientHeight){
 					throw new Error("传入的宽高值无法画出图形");
 				}
-				path = "m 0 "  + strokeWidth;
+				/*path = "m 0 "  + strokeWidth;
 				path += " l " + (clientWidth/2) + " " + (clientHeight - strokeWidth);
 				path += " l " + (clientWidth/2) + " " + (-clientHeight + strokeWidth);
-				path += " z";
+				path += " z";*/
+				var offset = strokeWidth/2;
+				path = "M " + offset + " " + offset;
+				path += " L " + (clientWidth - offset) + " " + offset;
+				path += " L " + clientWidth/2 + " " + clientHeight;
+				path += " Z";
 				return path;
 			},
 			sevenpiece_sub3:function(clientWidth,clientHeight,strokeWidth){
@@ -653,11 +663,17 @@
 				if(clientWidth < clientHeight){
 					throw new Error("传入的宽高值无法画出图形");
 				}
-				path = "m "  + (clientHeight) + " " + strokeWidth;
+				/*path = "m "  + (clientHeight) + " " + strokeWidth;
 				path += " l " + (clientWidth - clientHeight) + " 0";
 				path += " l " + (-clientHeight) + " " + (clientHeight - strokeWidth*2);
 				path += " l " + (-clientWidth + clientHeight) + " 0";
-				path += " z";
+				path += " z";*/
+				var offset = strokeWidth/2;
+				path = "M " + clientHeight + " " + offset;
+				path += " L " + clientWidth + " " + offset;
+				path += " L " + (clientWidth - clientHeight) + " " + (clientHeight - offset);
+				path += " L " + 0 + " " + (clientHeight - offset);
+				path += " Z";
 				return path;
 			},
 			sevenpiece_sub4:function(clientWidth,clientHeight,strokeWidth){
@@ -665,10 +681,15 @@
 				if(clientWidth < clientHeight){
 					throw new Error("传入的宽高值无法画出图形");
 				}
-				path = "m "  + (clientWidth/2) + " 0";
+				/*path = "m "  + (clientWidth/2) + " 0";
 				path += " l " + (-clientWidth/2) + " " + (clientHeight-strokeWidth);
 				path += " l " + (clientWidth) + " 0";
-				path += " z";
+				path += " z";*/
+				var offset = strokeWidth/2;
+				path = "M " + clientWidth/2 + " " + offset;
+				path += " L " + 0 + " " + (clientHeight - offset);
+				path += " L " + clientWidth + " " + (clientHeight - offset);
+				path += " Z";
 				return path;
 			},
 			sevenpiece_sub5:function(clientWidth,clientHeight,strokeWidth){
@@ -676,11 +697,17 @@
 				if(clientWidth != clientHeight){
 					throw new Error("传入的宽高值无法画出图形");
 				}
-				path = "m "  + (clientWidth/2) + " 0";
+				/*path = "m "  + (clientWidth/2) + " 0";
 				path += " l " + (-clientWidth/2) + " " + (clientHeight/2);
 				path += " l " + (clientWidth/2) + " " + (clientHeight/2);
 				path += " l " + (clientWidth/2) + " " + (-clientHeight/2);
-				path += " z";
+				path += " z";*/
+				var offset = strokeWidth/2;
+				path = "M " + clientWidth/2 + " " + 0;
+				path += " L " + 0 + " " + (clientHeight/2);
+				path += " L " + clientWidth/2 + " " + clientHeight;
+				path += " L " + clientWidth + " " + clientHeight/2;
+				path += " Z";
 				return path;
 			},
 			sevenpiece_sub6:function(clientWidth,clientHeight,strokeWidth){
@@ -688,10 +715,15 @@
 				if(clientWidth > clientHeight){
 					throw new Error("传入的宽高值无法画出图形");
 				}
-				path = "m "  + (clientWidth-strokeWidth) + " 0";
+				/*path = "m "  + (clientWidth-strokeWidth) + " 0";
 				path += " l " + (-clientWidth+strokeWidth) + " " + (clientHeight/2);
 				path += " l " + (clientWidth-strokeWidth) + " " + (clientHeight/2);
-				path += " z";
+				path += " z";*/
+				var offset = strokeWidth/2;
+				path = "M " + (clientWidth-offset) + " " + 0;
+				path += " L " + 0 + " " + clientHeight/2;
+				path += " L " + (clientWidth-offset) + " " + clientHeight;
+				path += " Z";
 				return path;
 			},
 			sevenpiece_sub7:function(clientWidth,clientHeight,strokeWidth){
@@ -699,10 +731,15 @@
 				if(clientWidth != clientHeight){
 					throw new Error("传入的宽高值无法画出图形");
 				}
-				path = "m "  + (clientWidth-strokeWidth) + " 0";
+				/*path = "m "  + (clientWidth-strokeWidth) + " 0";
 				path += " l " + (-clientWidth+strokeWidth) + " " + (clientHeight-strokeWidth);
 				path += " l " + (clientWidth-strokeWidth) + " 0";
-				path += " z";
+				path += " z";*/
+				var offset = strokeWidth/2;
+				path = "M " + (clientWidth-offset) + " " + 0;
+				path += " L " + 0 + " " + (clientHeight - offset);
+				path += " L " + (clientWidth-offset) + " " + (clientHeight - offset);
+				path += " Z";
 				return path;
 			}
 		};
